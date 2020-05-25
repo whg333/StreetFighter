@@ -1,475 +1,475 @@
 
 
-		var Block = Class.create( function( top, left, width, height ){
-			this.top = top;
-			this.left = left;
-			this.border = false;
-		},
-
-		{
-			init: function(){
-
-			},
-
-			changeBg: function( bg, framesNum, combo, position ){
-				
-				var _oWidth = this.width;
-
-				this.width =  Util.imgObj[ bg ].width / framesNum;
-
-				this._oWidth = ( this.width - _oWidth ) * Config.map.spiritZoom;
-
-				if ( this.direction === -1 ){
-					this.left = this.left - this._oWidth;
-				}
-				
-				if ( ( this.currState === 'somesault_up' ) &&  this.border === 'right' ){
-					this.left = this.left - 60;	
-				}
-
-				if ( !combo ){
-
-					var _oHeight = this.height;
-	
-					this.height = Util.imgObj[ bg ].height ;
-	
-					this._oHeight = ( this.height - _oHeight ) * Config.map.spiritZoom;	
-					this.top = ( this.top - this._oHeight );
-				}else{
-					
-				}
-
-				this.position = position || 0;
-
-			},
-
-			crossBorder: function( left ){
-				if ( !Map || !Map.getMaxX() ) return left;
-				var maxX =  Map.getMaxX();
-				var right = this.state === 'jump_back' ? 130 : 85;
-				if ( left < 15 ){
-					this.border = 'left';
-					return 15;
-				}else if ( left + this.width > maxX - right ){
-					this.border = 'right';
-					return maxX - this.width - right;
-				}
-				this.border = false;
-				return left;
-			}
-
-		})
-
-
-
-	var Spirit = Block.subClass( function( config ){
-			this.config = config;
-			this.name = config.name;
-			this.states = config.states;
-			this.f_top = 0;
-			this.f_left = 0;
-			this.top = 0;
-			this.left = 0;
-			this.width = 0;
-			this.height = 0;
-			this.bottom = 0;
-			this.direction = 1;
-			this.state = null;
-			this.currState = null;
-			this.enemy = null;
-			this.animate = null;	//“∆∂Ø
-			this.animateDirection = [ 0, 0 ];
-			this.frames = null;		//∂Øª≠÷°  
-			this.shadow = null;	  //“ı”∞
-			this.queue = null;		//∂Øª≠∂”¡–
-			this.keyManage = null;//º¸≈Ãπ‹¿Ì
-			this.collision = null;//≈ˆ◊≤ºÏ≤‚
-			this.attack = null;   //π•ª˜
-			this.waveBoxing = null; //≤®∂Ø»≠
-			this.status = null;   //»ÀŒÔ◊¥Ã¨ª˙, ±£¥Ê»ÀŒÔÀ˘”–º¥ ±◊¥Ã¨
-			this.bloodBar = null;
-			this.statusManage = null;
-			this.stageManage = null;
-		},
-
-		{
-			init: function( f_left, f_top, direction ){
-				this.f_left = f_left;
-				this.f_top = f_top;
-				this.f_height = Util.imgObj[ this.states[ this.states.default ].bg ].height;
-				this.direction = direction;
-				this.frames = this.implement( 'SpiritFrames' );
-				this.shadow = this.implement( 'Shadow');
-				this.animate = this.implement( 'Animate' );
-				this.queue = this.implement( 'Queue' );
-				this.lock = this.implement( 'Lock' );
-				this.movelock = this.implement( 'Lock' );
-				this.keyManage = this.implement( 'KeyManage', this.config.keyMap );
-				this.collision = this.implement( 'Collision' );  //¿‡–Õ, ø…Õ∆∂Ø, ø…œ˙ªŸ
-				this.attack = Fighter.getInstance( this ).init();
-				this.waveBoxing = WaveBoxing.getInstance( this ).init();
-				this.statusManage = this.implement( 'StatusManage' );
-				this.stageManage = this.implement( 'Stage' );
-				this.event();
+var Block = Class.create( function( top, left, width, height ){
+        this.top = top;
+        this.left = left;
+        this.border = false;
+    },
+
+    {
+        init: function(){
+
+        },
+
+        changeBg: function( bg, framesNum, combo, position ){
+
+            var _oWidth = this.width;
+
+            this.width =  Util.imgObj[ bg ].width / framesNum;
+
+            this._oWidth = ( this.width - _oWidth ) * Config.map.spiritZoom;
+
+            if ( this.direction === -1 ){
+                this.left = this.left - this._oWidth;
+            }
+
+            if ( ( this.currState === 'somesault_up' ) &&  this.border === 'right' ){
+                this.left = this.left - 60;
+            }
+
+            if ( !combo ){
+
+                var _oHeight = this.height;
+
+                this.height = Util.imgObj[ bg ].height ;
+
+                this._oHeight = ( this.height - _oHeight ) * Config.map.spiritZoom;
+                this.top = ( this.top - this._oHeight );
+            }else{
+
+            }
+
+            this.position = position || 0;
+
+        },
+
+        crossBorder: function( left ){
+            if ( !Map || !Map.getMaxX() ) return left;
+            var maxX =  Map.getMaxX();
+            var right = this.state === 'jump_back' ? 130 : 85;
+            if ( left < 15 ){
+                this.border = 'left';
+                return 15;
+            }else if ( left + this.width > maxX - right ){
+                this.border = 'right';
+                return maxX - this.width - right;
+            }
+            this.border = false;
+            return left;
+        }
 
-				var currState = this.states[ this.states.default ];
+    })
 
-				this.changeBg( currState.bg, currState.framesNum );
 
-				this.play( this.states.default );
 
-				this.animate.moveto( f_left, f_top );
+var Spirit = Block.subClass( function( config ){
+        this.config = config;
+        this.name = config.name;
+        this.states = config.states;
+        this.f_top = 0;
+        this.f_left = 0;
+        this.top = 0;
+        this.left = 0;
+        this.width = 0;
+        this.height = 0;
+        this.bottom = 0;
+        this.direction = 1;
+        this.state = null;
+        this.currState = null;
+        this.enemy = null;
+        this.animate = null;	//ÁßªÂä®
+        this.animateDirection = [ 0, 0 ];
+        this.frames = null;		//Âä®ÁîªÂ∏ß
+        this.shadow = null;	  //Èò¥ÂΩ±
+        this.queue = null;		//Âä®ÁîªÈòüÂàó
+        this.keyManage = null;//ÈîÆÁõòÁÆ°ÁêÜ
+        this.collision = null;//Á¢∞ÊíûÊ£ÄÊµã
+        this.attack = null;   //ÊîªÂáª
+        this.waveBoxing = null; //Ê≥¢Âä®Êã≥
+        this.status = null;   //‰∫∫Áâ©Áä∂ÊÄÅÊú∫, ‰øùÂ≠ò‰∫∫Áâ©ÊâÄÊúâÂç≥Êó∂Áä∂ÊÄÅ
+        this.bloodBar = null;
+        this.statusManage = null;
+        this.stageManage = null;
+    },
 
-				return this;
-			},
+    {
+        init: function( f_left, f_top, direction ){
+            this.f_left = f_left;
+            this.f_top = f_top;
+            this.f_height = Util.imgObj[ this.states[ this.states.default ].bg ].height;
+            this.direction = direction;
+            this.frames = this.implement( 'SpiritFrames' );
+            this.shadow = this.implement( 'Shadow');
+            this.animate = this.implement( 'Animate' );
+            this.queue = this.implement( 'Queue' );
+            this.lock = this.implement( 'Lock' );
+            this.movelock = this.implement( 'Lock' );
+            this.keyManage = this.implement( 'KeyManage', this.config.keyMap );
+            this.collision = this.implement( 'Collision' );  //Á±ªÂûã, ÂèØÊé®Âä®, ÂèØÈîÄÊØÅ
+            this.attack = Fighter.getInstance( this ).init();
+            this.waveBoxing = WaveBoxing.getInstance( this ).init();
+            this.statusManage = this.implement( 'StatusManage' );
+            this.stageManage = this.implement( 'Stage' );
+            this.event();
 
-			setEnemy: function( enemy ){
-				this.enemy = enemy;
-			},
+            var currState = this.states[ this.states.default ];
 
-			play: function( state, force ){
-			
-				if ( this.statusManage.isCrouch() && ( state === 'wait' || state === 'force_wait' ) ){  //∂◊œ¬µƒ◊¥Ã¨’æ∆¿¥.	
-					return this.play( 'stand_up', true );
-				}
+            this.changeBg( currState.bg, currState.framesNum );
 
-				if ( this.jump_combo( state ) && state !== 'force_wait' ) return;  //ø’÷–◊È∫œºº
-			
+            this.play( this.states.default );
 
-				if ( this.defense( state ) ) return;  // «∑Ò‘⁄∑¿”˘◊¥Ã¨
-				
-				var lock_level = Config.play[ state ].lock || 0;			
-				
-				var old_lock_leval = this.lock.getLevel() || 0;
-				
-
-				if ( !force ){
-	
-					if ( state === this.state || ( this.lock.locked() && old_lock_leval >= lock_level ) ) {	
-						return;
-					}
+            this.animate.moveto( f_left, f_top );
 
-				}
-				
-				
-				this.lock.lock( lock_level );   //º∂±, Ω‚À¯—”≥Ÿ.
+            return this;
+        },
 
-				this.queue.clean();
+        setEnemy: function( enemy ){
+            this.enemy = enemy;
+        },
 
-				var composes = Config.play[ state ].compose;  //◊È∫œstates
+        play: function( state, force ){
 
-				for ( var i = 0, c; c = composes[i++]; ){
-					var s = Util.copy( this.states[ c ] );
-					s.currState = c;
-					this.queue.add( s );
-				}
+            if ( this.statusManage.isCrouch() && ( state === 'wait' || state === 'force_wait' ) ){  //Ëπ≤‰∏ãÁöÑÁä∂ÊÄÅÁ´ôËµ∑Êù•.
+                return this.play( 'stand_up', true );
+            }
 
-				this.state = state;
+            if ( this.jump_combo( state ) && state !== 'force_wait' ) return;  //Á©∫‰∏≠ÁªÑÂêàÊäÄ
 
-				if ( state === 'light_wave_boxing' || state === 'heavy_wave_boxing' ){
-					if ( this.waveBoxing.firing ){
-						this.queue.clean();
-						this.lock.lock(0);
-						return this.play( state === 'light_wave_boxing' ? 'light_boxing' : 'heavy_boxing' );
-					}
-					this.waveBoxing.start( this.direction, state === 'light_wave_boxing' ? this.states[ 'light_wave' ] : this.states[ 'heavy_wave' ] );
-				}
-
-				this.fireFrames();
-				
-				this.animate.event.fireEvent( 'playStart' );
-
-			},
-
-
-			jump_combo: function( state ){   //Ã¯‘æµƒ◊È∫œººƒ‹
-
-				if ( !this.state || !this.statusManage.isJump() ) return false;
-
-				if ( state === 'jump_fall_down' || state === 'jump_dead' || state === 'after_dead2' || state === 'heavy_attacked_fall_down' || state === 'crouch_kick_attacked_fall' ){
-					this.frames.combo_attack.stop();
-					return false;
-				}
-
-				var combo = this.states.combo && this.states.combo[ this.state + '_' + state ];
 
-				if ( !combo ) return true;
+            if ( this.defense( state ) ) return;  //ÊòØÂê¶Âú®Èò≤Âæ°Áä∂ÊÄÅ
 
-				var flag = this.frames.combo_attack.start( combo.bg, combo.framesNum, combo.repeat, combo.afterFrame );
+            var lock_level = Config.play[ state ].lock || 0;
 
-				this.statusManage.set_attack_type( combo.attack_type );
-				
-				var attack_config = combo.attack_config;
-	
-				this.statusManage.set_attack_power( combo.attack_power );
+            var old_lock_leval = this.lock.getLevel() || 0;
 
-				
-				if ( flag ){   // «∑Ò◊È∫œ»≠“—æ≠Ω· ¯
-
-					this.attack.stickStart( attack_config, combo.effect_position, combo.sound );
 
-					var self = this;
-
-					this.frames.combo_attack.done( function(){
-						self.statusManage.set_attack_type( 0 );
-						self.attack.stop();
-					})
-				}
+            if ( !force ){
 
-				return true;
-
-			},
+                if ( state === this.state || ( this.lock.locked() && old_lock_leval >= lock_level ) ) {
+                    return;
+                }
 
-			defense: function( state ){
-
-				if ( state === 'back' ){
-					if ( this.enemy.waveBoxing.firing || ( this.enemy.statusManage.get().attack_type === 'attack' && this.statusManage.get().enemy_distance_type !== 'furthest' ) ){
-						if ( this.statusManage.get().attack_type === 'wait' ){
-							this.play( 'stand_up_defense' );   //∑¿”˘◊¥Ã¨
-							this.statusManage.set_attack_type( 1 );
-						}
-						return true;
-					}
-				}
+            }
 
-				else if ( state === 'stand_crouch_defense' ){
-					if ( !this.enemy.waveBoxing.firing && ( this.enemy.statusManage.get().attack_type !== 'attack' || this.statusManage.get().enemy_distance_type === 'furthest' ) ){
-						this.play( 'crouch' );   //∑¿”˘◊¥Ã¨
-						this.statusManage.set_attack_type( 0 );
-						return true;
-					}
-						
-				}
-				
-			},
 
+            this.lock.lock( lock_level );   //Á∫ßÂà´, Ëß£ÈîÅÂª∂Ëøü.
 
-			fireFrames: function(){
+            this.queue.clean();
 
-				var state = this.queue.dequeue();
+            var composes = Config.play[ state ].compose;  //ÁªÑÂêàstates
 
-				if ( !state ){   //∂”¡–¿Ô√ª”–∂Ø◊˜µƒ ±∫Ú
+            for ( var i = 0, c; c = composes[i++]; ){
+                var s = Util.copy( this.states[ c ] );
+                s.currState = c;
+                this.queue.add( s );
+            }
 
-					var old_dir = this.direction;
+            this.state = state;
 
-					var new_direction = this.left > ( this.enemy && this.enemy.left ) ? -1 : 1;
+            if ( state === 'light_wave_boxing' || state === 'heavy_wave_boxing' ){
+                if ( this.waveBoxing.firing ){
+                    this.queue.clean();
+                    this.lock.lock(0);
+                    return this.play( state === 'light_wave_boxing' ? 'light_boxing' : 'heavy_boxing' );
+                }
+                this.waveBoxing.start( this.direction, state === 'light_wave_boxing' ? this.states[ 'light_wave' ] : this.states[ 'heavy_wave' ] );
+            }
 
-					if ( new_direction !== old_dir ){
-						if ( this.border ){
-							this.left = this.left + new_direction * 18;
-						}else{
-							this.left = this.left + new_direction * 105;
-						}
-					}
-		
-					this.direction = this.left > ( this.enemy && this.enemy.left ) ? -1 : 1;  //µ˜’˚∑ΩœÚ
-					
-					this.animate.mirror( this.direction );  //∑ΩœÚæµœÒ
-					this.keyManage.mirror( this.direction );   //º¸≈ÃæµœÒ
-					if ( this.statusManage.isCrouch()  ){  //∂◊œ¬µƒ◊¥Ã¨’æ∆¿¥.
-						return this.play( 'stand_up', true );
-					}else{
-						this.queue.add( this.states[ this.states.default ] );
-					}
-					this.lock.lock( 0 );
-					this.state = this.states.default;
-					this.frames.combo_attack.stop();
+            this.fireFrames();
 
-					if ( this.attack.animate_type === 'stick' ){
-						this.attack.stop();	
-					}
+            this.animate.event.fireEvent( 'playStart' );
 
-					return this.fireFrames();
-				}
+        },
 
-				if ( state !== this.state ){
-					this.changeBg( state.bg, state.framesNum, null, state.position );
-				}
 
+        jump_combo: function( state ){   //Ë∑≥Ë∑ÉÁöÑÁªÑÂêàÊäÄËÉΩ
 
-				if ( state.easing[ 1 ] === null ){
-					var top = this.f_top - this.top + ( this.f_height - this.height ) * Config.map.spiritZoom;
-				}
+            if ( !this.state || !this.statusManage.isJump() ) return false;
 
+            if ( state === 'jump_fall_down' || state === 'jump_dead' || state === 'after_dead2' || state === 'heavy_attacked_fall_down' || state === 'crouch_kick_attacked_fall' ){
+                this.frames.combo_attack.stop();
+                return false;
+            }
 
-				this.currState = state.currState;
-				
-				this.frames.start( state.bg, state.framesNum, state.easing[2], state.repeat, state.position, this.direction );
+            var combo = this.states.combo && this.states.combo[ this.state + '_' + state ];
 
-				this.animate.start( state.easing[0] * this.direction, top || state.easing[1], state.easing[2] * Config.fps * state.framesNum, state.easing[3] );
-				
-				var _left = state.easing[0] * this.direction, _top = top || state.easing[1];
-				
-				this.animateDirection = [ _left === 0 ? 0 : _left / Math.abs( _left ), _top === 0 ? 0 : _top / Math.abs( _top )  ]; 
+            if ( !combo ) return true;
 
-				this.statusManage.set_attack_type( state.attack_type || 0 );
-	
-				this.statusManage.set_attack_power( state.attack_power || [] );
+            var flag = this.frames.combo_attack.start( combo.bg, combo.framesNum, combo.repeat, combo.afterFrame );
 
-				if ( state.attack_type > 0 || this.statusManage.isJump() ){
-					//this.frames.checkZindex();  //µ˜’˚≤„º∂
-				}
+            this.statusManage.set_attack_type( combo.attack_type );
 
-				if ( state.attack_type === 2 ){
-					var attack_config = state.attack_config, effect_position = state.effect_position;
-					attack_config && this.attack.start( attack_config[0], attack_config[1], [ attack_config[ 2 ] * this.direction, attack_config[ 3 ], attack_config[ 4 ], attack_config[ 5 ], attack_config[ 6 ], attack_config[ 7 ], attack_config[ 8 ] ], effect_position, state.sound );
-				}
+            var attack_config = combo.attack_config;
 
-				if ( state.specialSound ){
-					this.attack.audio.play( state.specialSound );
-				}
+            this.statusManage.set_attack_power( combo.attack_power );
 
-				if ( this.currState !== 'wait' ){
-					this.enemy.animate.event.fireEvent( 'stopPush' );
-				}
 
-				this.animate.event.fireEvent( 'framesStart' );
-				
+            if ( flag ){   //ÊòØÂê¶ÁªÑÂêàÊã≥Â∑≤ÁªèÁªìÊùü
 
-			},
+                this.attack.stickStart( attack_config, combo.effect_position, combo.sound );
 
-/************************************** ◊‘∂®“Â ¬º˛ *****************************************/
+                var self = this;
 
-			event: function( type ){
+                this.frames.combo_attack.done( function(){
+                    self.statusManage.set_attack_type( 0 );
+                    self.attack.stop();
+                })
+            }
 
-				var self = this;
+            return true;
 
-				this.frames.event.listen( 'framesDone', function(){
+        },
 
+        defense: function( state ){
 
-					if ( self.currState === 'crouch_kick_attacked_fall' || self.currState === 'after_heavy_attacked_fall_down' || self.currState === 'dead' ){
-						self.attack.audio.play( 'sound/fall.mp3' );	
-					}
+            if ( state === 'back' ){
+                if ( this.enemy.waveBoxing.firing || ( this.enemy.statusManage.get().attack_type === 'attack' && this.statusManage.get().enemy_distance_type !== 'furthest' ) ){
+                    if ( this.statusManage.get().attack_type === 'wait' ){
+                        this.play( 'stand_up_defense' );   //Èò≤Âæ°Áä∂ÊÄÅ
+                        this.statusManage.set_attack_type( 1 );
+                    }
+                    return true;
+                }
+            }
 
-					if ( self.currState === 'somesault_up' ){
-						self.statusManage.setInvincible( 100 );  //≈¿∆¿¥µƒ ±∫Ú∂Ã‘›Œﬁµ–.
-					}
-					self.fireFrames();
-				})
+            else if ( state === 'stand_crouch_defense' ){
+                if ( !this.enemy.waveBoxing.firing && ( this.enemy.statusManage.get().attack_type !== 'attack' || this.statusManage.get().enemy_distance_type === 'furthest' ) ){
+                    this.play( 'crouch' );   //Èò≤Âæ°Áä∂ÊÄÅ
+                    this.statusManage.set_attack_type( 0 );
+                    return true;
+                }
 
-				this.frames.event.listen( 'framesStart', function(){
+            }
 
-					self.animate.unlock();
-					
-					if ( self.state === 'wait' ){
-						self.animate.correct();	  //–ﬁ’˝Œª÷√
-					}
-					
-				})
+        },
 
-				this.frames.event.listen( 'frameStart', function(){
 
-					if ( self.state === 'wait' || self.state === 'crouch' ){
-						self.direction = self.left > ( self.enemy && self.enemy.left ) ? -1 : 1;  //µ˜’˚∑ΩœÚ	
-					}
+        fireFrames: function(){
 
-					self.collision.check();      //ºÏ≤‚≈ˆ◊≤
-					self.animate.move();   //√ø÷°ø™ º«∞µ˜’˚Œª÷√.
-					self.shadow.moveto( Map.height - 73, self.statusManage.isJump() && self.direction === -1 ? self.left + ( self.width - 62 ) * Config.map.spiritZoom : self.left, self.statusManage.isJump() ? 62 : self.width, self.direction );  //“∆∂Ø“ı”∞
-					self.statusManage.check_enemy_distance( self.enemy );
+            var state = this.queue.dequeue();
 
+            if ( !state ){   //ÈòüÂàóÈáåÊ≤°ÊúâÂä®‰ΩúÁöÑÊó∂ÂÄô
 
-				})
+                var old_dir = this.direction;
 
+                var new_direction = this.left > ( this.enemy && this.enemy.left ) ? -1 : 1;
 
-				this.animate.event.listen( 'stopPush', function(){
-					self.states.forward.easing[ 0 ] = 150;
-				});
+                if ( new_direction !== old_dir ){
+                    if ( this.border ){
+                        this.left = this.left + new_direction * 18;
+                    }else{
+                        this.left = this.left + new_direction * 105;
+                    }
+                }
 
-				
-				this.animate.event.listen( 'frameStart', function(){
+                this.direction = this.left > ( this.enemy && this.enemy.left ) ? -1 : 1;  //Ë∞ÉÊï¥ÊñπÂêë
 
-					var d = 0;
+                this.animate.mirror( this.direction );  //ÊñπÂêëÈïúÂÉè
+                this.keyManage.mirror( this.direction );   //ÈîÆÁõòÈïúÂÉè
+                if ( this.statusManage.isCrouch()  ){  //Ëπ≤‰∏ãÁöÑÁä∂ÊÄÅÁ´ôËµ∑Êù•.
+                    return this.play( 'stand_up', true );
+                }else{
+                    this.queue.add( this.states[ this.states.default ] );
+                }
+                this.lock.lock( 0 );
+                this.state = this.states.default;
+                this.frames.combo_attack.stop();
 
-					self.enemy.animate.event.removeListen( 'frameDone' );
+                if ( this.attack.animate_type === 'stick' ){
+                    this.attack.stop();
+                }
 
-					if ( ( self.border === 'left' && self.animateDirection[ 0 ] === -1 ) || ( self.border === 'right' && self.animateDirection[ 0 ] === 1 ) ){
+                return this.fireFrames();
+            }
 
-						self.enemy.stageManage.start();
+            if ( state !== this.state ){
+                this.changeBg( state.bg, state.framesNum, null, state.position );
+            }
 
-						if ( self.statusManage.get().enemy_distance_type === 'furthest' ) return;
 
-							self.stageManage.scroll( self.border );
+            if ( state.easing[ 1 ] === null ){
+                var top = this.f_top - this.top + ( this.f_height - this.height ) * Config.map.spiritZoom;
+            }
 
-							self.enemy.animate.event.listen( 'frameDone', function(){
 
-								if ( self.enemy.animateDirection[ 0 ] === 0 && self.enemy.animateDirection[ 1 ] === 0 ){
-									self.stageManage.pushEnemy();
-								}else{
-									if ( self.stageManage.isScrolling() ){
-										self.enemy.animate.stagePush( self.stageManage.isScrolling() );
-									}else{
-										self.enemy.animate.stopStagePush();		
-									}
-								}
-							}, 1 )
+            this.currState = state.currState;
 
-					}else{
-						self.stageManage.stop();
-					}
+            this.frames.start( state.bg, state.framesNum, state.easing[2], state.repeat, state.position, this.direction );
 
-				});
-				
+            this.animate.start( state.easing[0] * this.direction, top || state.easing[1], state.easing[2] * Config.fps * state.framesNum, state.easing[3] );
 
+            var _left = state.easing[0] * this.direction, _top = top || state.easing[1];
 
-				this.collision.event.listen( 'affirm', function( obj, dir ){
+            this.animateDirection = [ _left === 0 ? 0 : _left / Math.abs( _left ), _top === 0 ? 0 : _top / Math.abs( _top )  ];
 
-					if ( obj === self.enemy ){
+            this.statusManage.set_attack_type( state.attack_type || 0 );
 
-						if ( self.state === 'forward' && ( obj.state === 'wait' || obj.state === 'crouch' ) ){
-							obj.animate.push( 3 );
-							self.states.forward.easing[ 0 ] = 90;
-							if ( obj.border ){
-								self.animate.lock( obj.border );
-							}
-						}
+            this.statusManage.set_attack_power( state.attack_power || [] );
 
-						if ( self.currState === 'jump_forward_down' || self.currState === 'jumpDown' ){
-							var distance = self.statusManage.get().enemy_distance;
-							obj.animate.push( ( 234 - distance ) / 40 );
-						}
+            if ( state.attack_type > 0 || this.statusManage.isJump() ){
+                //this.frames.checkZindex();  //Ë∞ÉÊï¥Â±ÇÁ∫ß
+            }
 
-						if ( self.state === 'forward' &&  obj.state === 'forward'  ){
-							self.animate.lock( dir );	
-						}
+            if ( state.attack_type === 2 ){
+                var attack_config = state.attack_config, effect_position = state.effect_position;
+                attack_config && this.attack.start( attack_config[0], attack_config[1], [ attack_config[ 2 ] * this.direction, attack_config[ 3 ], attack_config[ 4 ], attack_config[ 5 ], attack_config[ 6 ], attack_config[ 7 ], attack_config[ 8 ] ], effect_position, state.sound );
+            }
 
-					}
+            if ( state.specialSound ){
+                this.attack.audio.play( state.specialSound );
+            }
 
-				})
+            if ( this.currState !== 'wait' ){
+                this.enemy.animate.event.fireEvent( 'stopPush' );
+            }
 
+            this.animate.event.fireEvent( 'framesStart' );
 
-				this.keyManage.match( function( state ){
 
-					if ( self.statusManage.isCrouch() && self.states[ 'crouch_' + state ] ){
-						return 	self.play( 'crouch_' + state );
-					}
+        },
 
-					if ( !self.statusManage.isJump() && self.states[ 'near_' + state ] && self.statusManage.get().enemy_distance <= self.states[ 'near_' + state ].near  ){
-						return self.play( 'near_' + state );
-					}
+        /************************************** Ëá™ÂÆö‰πâ‰∫ã‰ª∂ *****************************************/
 
-					return self.play( state );
-				});
+        event: function( type ){
 
+            var self = this;
 
-				this.keyManage.unmatch( function( state ){
+            this.frames.event.listen( 'framesDone', function(){
 
-					if ( self.state === 'stand_up' && state === 'wait' ){
-						return;
-					}
 
-					if ( self.state === 'back' || self.state === 'forward' || self.state === 'stand_up_defense' || self.state === 'stand_crouch_defense' || self.state === 'crouch' ){
-						self.play( self.states.default );
-					}
+                if ( self.currState === 'crouch_kick_attacked_fall' || self.currState === 'after_heavy_attacked_fall_down' || self.currState === 'dead' ){
+                    self.attack.audio.play( 'sound/fall.mp3' );
+                }
 
-				});
+                if ( self.currState === 'somesault_up' ){
+                    self.statusManage.setInvincible( 100 );  //Áà¨Ëµ∑Êù•ÁöÑÊó∂ÂÄôÁü≠ÊöÇÊó†Êïå.
+                }
+                self.fireFrames();
+            })
 
-			}
+            this.frames.event.listen( 'framesStart', function(){
 
+                self.animate.unlock();
 
-		}
+                if ( self.state === 'wait' ){
+                    self.animate.correct();	  //‰øÆÊ≠£‰ΩçÁΩÆ
+                }
 
-	)
+            })
+
+            this.frames.event.listen( 'frameStart', function(){
+
+                if ( self.state === 'wait' || self.state === 'crouch' ){
+                    self.direction = self.left > ( self.enemy && self.enemy.left ) ? -1 : 1;  //Ë∞ÉÊï¥ÊñπÂêë
+                }
+
+                self.collision.check();      //Ê£ÄÊµãÁ¢∞Êíû
+                self.animate.move();   //ÊØèÂ∏ßÂºÄÂßãÂâçË∞ÉÊï¥‰ΩçÁΩÆ.
+                self.shadow.moveto( Map.height - 73, self.statusManage.isJump() && self.direction === -1 ? self.left + ( self.width - 62 ) * Config.map.spiritZoom : self.left, self.statusManage.isJump() ? 62 : self.width, self.direction );  //ÁßªÂä®Èò¥ÂΩ±
+                self.statusManage.check_enemy_distance( self.enemy );
+
+
+            })
+
+
+            this.animate.event.listen( 'stopPush', function(){
+                self.states.forward.easing[ 0 ] = 150;
+            });
+
+
+            this.animate.event.listen( 'frameStart', function(){
+
+                var d = 0;
+
+                self.enemy.animate.event.removeListen( 'frameDone' );
+
+                if ( ( self.border === 'left' && self.animateDirection[ 0 ] === -1 ) || ( self.border === 'right' && self.animateDirection[ 0 ] === 1 ) ){
+
+                    self.enemy.stageManage.start();
+
+                    if ( self.statusManage.get().enemy_distance_type === 'furthest' ) return;
+
+                    self.stageManage.scroll( self.border );
+
+                    self.enemy.animate.event.listen( 'frameDone', function(){
+
+                        if ( self.enemy.animateDirection[ 0 ] === 0 && self.enemy.animateDirection[ 1 ] === 0 ){
+                            self.stageManage.pushEnemy();
+                        }else{
+                            if ( self.stageManage.isScrolling() ){
+                                self.enemy.animate.stagePush( self.stageManage.isScrolling() );
+                            }else{
+                                self.enemy.animate.stopStagePush();
+                            }
+                        }
+                    }, 1 )
+
+                }else{
+                    self.stageManage.stop();
+                }
+
+            });
+
+
+
+            this.collision.event.listen( 'affirm', function( obj, dir ){
+
+                if ( obj === self.enemy ){
+
+                    if ( self.state === 'forward' && ( obj.state === 'wait' || obj.state === 'crouch' ) ){
+                        obj.animate.push( 3 );
+                        self.states.forward.easing[ 0 ] = 90;
+                        if ( obj.border ){
+                            self.animate.lock( obj.border );
+                        }
+                    }
+
+                    if ( self.currState === 'jump_forward_down' || self.currState === 'jumpDown' ){
+                        var distance = self.statusManage.get().enemy_distance;
+                        obj.animate.push( ( 234 - distance ) / 40 );
+                    }
+
+                    if ( self.state === 'forward' &&  obj.state === 'forward'  ){
+                        self.animate.lock( dir );
+                    }
+
+                }
+
+            })
+
+
+            this.keyManage.match( function( state ){
+
+                if ( self.statusManage.isCrouch() && self.states[ 'crouch_' + state ] ){
+                    return 	self.play( 'crouch_' + state );
+                }
+
+                if ( !self.statusManage.isJump() && self.states[ 'near_' + state ] && self.statusManage.get().enemy_distance <= self.states[ 'near_' + state ].near  ){
+                    return self.play( 'near_' + state );
+                }
+
+                return self.play( state );
+            });
+
+
+            this.keyManage.unmatch( function( state ){
+
+                if ( self.state === 'stand_up' && state === 'wait' ){
+                    return;
+                }
+
+                if ( self.state === 'back' || self.state === 'forward' || self.state === 'stand_up_defense' || self.state === 'stand_crouch_defense' || self.state === 'crouch' ){
+                    self.play( self.states.default );
+                }
+
+            });
+
+        }
+
+
+    }
+
+)
 
 
 
@@ -495,236 +495,236 @@ Spirit.interface( 'Ai', Ai );
 
 
 
-	var Fighter = Class.create( function( master ){
-		this.width = 50;
-		this.height = 50;
-		this.left = 0;
-		this.top = 0;
-		this.master = master;
-		this.timer = null;
-		this.animate = null;
-		this.attackEffect = null;
-		this.effect_position = null;
-		this.sound = null;
-		this.easing = null;
-	},
+var Fighter = Class.create( function( master ){
+        this.width = 50;
+        this.height = 50;
+        this.left = 0;
+        this.top = 0;
+        this.master = master;
+        this.timer = null;
+        this.animate = null;
+        this.attackEffect = null;
+        this.effect_position = null;
+        this.sound = null;
+        this.easing = null;
+    },
 
-	{
-		init: function(){
-			var self = this;
-			this.animate = this.implement( 'Animate' );
-			this.collision = this.implement( 'Collision' );
-			this.attackEffect = this.implement( 'AttackEffect' );
-			this.audio = this.implement( 'Audio' );
+    {
+        init: function(){
+            var self = this;
+            this.animate = this.implement( 'Animate' );
+            this.collision = this.implement( 'Collision' );
+            this.attackEffect = this.implement( 'AttackEffect' );
+            this.audio = this.implement( 'Audio' );
 
-			this.animate.event.listen( 'framesDone', function(){				
-				self.stop();
-			})
-		
-		
-			this.master.enemy.bloodBar.event.listen( 'empty', function(){
-				setTimeout( function(){
-					Game.reload();
-				}, 3000 );
-				self.master.keyManage.stop();
-				if ( self.master.enemy.statusManage.isJump() ){
-					return self.master.enemy.play( 'jump_dead' );	
-				}
-				self.master.enemy.play( 'dead' );
-			})
+            this.animate.event.listen( 'framesDone', function(){
+                self.stop();
+            })
 
 
-			var framefn = function(){
-				if ( self.animate_type === 'stick' ){
-					if ( self.master.direction === 1 ){
-						self.left = self.master.left + self.easing[0];
-					}else{
-						self.left = self.master.left + self.master.width - self.easing[0] + self.width;
-					}
-					self.top = self.master.top + self.easing[1];
-				}else{
-					self.animate.move();
-				}
-						
-				self.collision.check();
-
-			}
-
-			this.timer = Timer.add( framefn );
-
-			this.collision.event.listen( 'affirm',  function( obj, dir ){
-
-				if ( obj === this.master.enemy ){
-				
-					if ( this.master.statusManage.isStand() && this.master.enemy.statusManage.isCrouch() && this.master.state.indexOf( 'near' ) < 0 ){
-						return this.stop();	
-					}
-
-					var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;
-
-					var enemy_invincible = this.master.enemy.statusManage.get().invincible;
-
-					if ( enemy_attack_type === 'fall_down' || enemy_invincible ){
-						return this.stop();
-					}
-								
-					if ( enemy_attack_type === 'defense' ){
-						return this.enemyDefense();
-					}
-				
-					var attack_power = this.master.statusManage.get().attack_power;
-
-					var enemy_attack_power = this.master.enemy.statusManage.get().attack_power;
-					
-				
-					if ( attack_power < enemy_attack_power ){
-						this.master.enemy.attack.stop();
-						this.master.enemy.attack.enemyBeat();
-						return this.stop();
-					}
-
-					if ( attack_power > 0 && attack_power === enemy_attack_power ){
-						this.master.enemy.attack.enemyBeat();
-					}
+            this.master.enemy.bloodBar.event.listen( 'empty', function(){
+                setTimeout( function(){
+                    Game.reload();
+                }, 3000 );
+                self.master.keyManage.stop();
+                if ( self.master.enemy.statusManage.isJump() ){
+                    return self.master.enemy.play( 'jump_dead' );
+                }
+                self.master.enemy.play( 'dead' );
+            })
 
 
-					this.enemyBeat();	
+            var framefn = function(){
+                if ( self.animate_type === 'stick' ){
+                    if ( self.master.direction === 1 ){
+                        self.left = self.master.left + self.easing[0];
+                    }else{
+                        self.left = self.master.left + self.master.width - self.easing[0] + self.width;
+                    }
+                    self.top = self.master.top + self.easing[1];
+                }else{
+                    self.animate.move();
+                }
 
-							
-				}
+                self.collision.check();
 
-			})
-			
-			
-			return this;
+            }
 
-		},
+            this.timer = Timer.add( framefn );
 
+            this.collision.event.listen( 'affirm',  function( obj, dir ){
 
-		enemyDefense: function(){
+                if ( obj === this.master.enemy ){
 
-			if ( this.master.statusManage.isCrouch() && this.master.enemy.statusManage.isStand() ){
-				return this.enemyBeat();
-			}
-			
-			this.attackEffect.start( 'defense', this.master.direction === 1 ? this.master.enemy.left + this.effect_position[ 0 ] : this.master.enemy.left + this.master.enemy.width + this.effect_position[ 0 ] , this.master.enemy.top + this.effect_position[ 1 ] );
+                    if ( this.master.statusManage.isStand() && this.master.enemy.statusManage.isCrouch() && this.master.state.indexOf( 'near' ) < 0 ){
+                        return this.stop();
+                    }
 
-			var attack_light = this.master.statusManage.get().attack_light;
+                    var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;
 
-			var spirit = this.master.enemy.border && !this.master.statusManage.isJump() ? this.master : this.master.enemy;
+                    var enemy_invincible = this.master.enemy.statusManage.get().invincible;
 
-			spirit.animate.start( ( attack_light ? -20 : -70 ) * spirit.direction, 0, 200, 'linear' );
+                    if ( enemy_attack_type === 'fall_down' || enemy_invincible ){
+                        return this.stop();
+                    }
 
-			var defenseBlood = this.master.states[ this.master.state ].defenseBlood;
-			
-			if ( defenseBlood ){
-				this.master.enemy.bloodBar.reduce( defenseBlood || 5 );
-			}
-			
-			this.master.enemy.attack.playAudio( 'sound/defense.mp3' );
+                    if ( enemy_attack_type === 'defense' ){
+                        return this.enemyDefense();
+                    }
 
-		},
+                    var attack_power = this.master.statusManage.get().attack_power;
 
-		enemyBeat: function(){
-	
-				if ( this.master.state === 'jump_whirl_kick' || this.master.state === 'jump_light_whirl_kick' ){
-					if ( this.master.enemy.statusManage.isCrouch() ){
-						return;
-					}
-				}
-
-				this.attackEffect.start( this.easing[ 4 ], this.master.direction === 1 ? this.master.enemy.left + this.effect_position[ 0 ] : this.master.enemy.left + this.master.enemy.width + this.effect_position[ 0 ] , this.master.enemy.top + this.effect_position[ 1 ] );
-
-				var attack_light = this.master.statusManage.get().attack_light;
-
-				if ( !this.master.statusManage.isCrouch() && this.master.enemy.statusManage.isJump() && this.master.state !== 'jump_whirl_kick' && this.master.state !== 'jump_light_whirl_kick' && this.master.state !== 'jump_heavy_impact_boxing' && this.master.state !== 'jump_light_impact_boxing' ){
-					this.master.enemy.play( 'jump_fall_down' );
-				}
-
-				else{
-					this.master.enemy.play( this.easing[ 5 ], true );
-				}
+                    var enemy_attack_power = this.master.enemy.statusManage.get().attack_power;
 
 
-				if ( this.master.enemy.border && !this.master.statusManage.isJump() ){
-					this.master.animate.start( ( attack_light ? -70 : -150 ) * this.master.direction, 0, 300, 'linear' );		
-				}
+                    if ( attack_power < enemy_attack_power ){
+                        this.master.enemy.attack.stop();
+                        this.master.enemy.attack.enemyBeat();
+                        return this.stop();
+                    }
 
-				this.master.enemy.bloodBar.reduce( this.easing[ 6 ] || 50 );
-				
-				this.master.enemy.waveBoxing.ready_firing = false;
-				
-				this.playAudio( null, 1 );
-
-				//this.master.enemy.attack.stop();
-
-				this.stop();
-
-		},
-
-		start: function( left, top, easing, effect_position, sound ){
-			if ( this.master.direction === 1 ){
-				this.left = this.master.left + left;
-			}else{
-				this.left = this.master.left + this.master.width * 2 - left - this.width * 2;
-			}
-			this.top = this.master.top + top;
-			this.effect_position = effect_position;
-			this.animate.start( easing[0], easing[1], easing[2], easing[3] );
-			this.easing = easing;
-			this.sound = sound;
-			this.timer.start();
-		},
-
-		stickStart: function( easing, effect_position, sound ){
-			var self = this;
-			this.easing = easing;
-			this.effect_position = effect_position;
-			this.sound = sound;
-			this.width = this.height = easing[ 2 ];
-			this.animate_type = 'stick';
-			this.timer.start();
-			this.playAudio( this.sound[ 0 ] )
-		},
-
-		stop: function(){
-			this.animate_type = 'normal';
-			this.timer.stop();
-			this.master.statusManage.set_attack_power( [ 0, false ] );  //π•ª˜÷Æ∫Û»°œ˚Œﬁµ–◊¥Ã¨
-			this.playAudio( null, 0 );
-		},
-
-		playAudio: function( src, type ){
-
-			if ( src ){
-				return this.audio.play( src );
-			}
-
-			if ( !this.sound ) return;
-
-			if ( type === 1 ){
-				return this.master.enemy.attack.audio.play( this.sound[ 1 ] );	
-			}else if ( type === 0 ){
-				if ( this.master.statusManage.isJump() ) return;
-				var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;	
-				if ( enemy_attack_type !== 'beat' &&  enemy_attack_type !== 'fall_down' && this.master.statusManage.get().attack_type === 'attack' ){
-					return this.audio.play( this.sound[ 0 ] );	
-				}	
-			}
+                    if ( attack_power > 0 && attack_power === enemy_attack_power ){
+                        this.master.enemy.attack.enemyBeat();
+                    }
 
 
-		},
+                    this.enemyBeat();
 
-		crossBorder: function( left ){
-			var maxX =  Map.getMaxX();
-			if ( left < 15 || left > maxX - this.width - 20 ){
-				this.stop();
-			}
-			return left;
-		}
-	
 
-	}
+                }
+
+            })
+
+
+            return this;
+
+        },
+
+
+        enemyDefense: function(){
+
+            if ( this.master.statusManage.isCrouch() && this.master.enemy.statusManage.isStand() ){
+                return this.enemyBeat();
+            }
+
+            this.attackEffect.start( 'defense', this.master.direction === 1 ? this.master.enemy.left + this.effect_position[ 0 ] : this.master.enemy.left + this.master.enemy.width + this.effect_position[ 0 ] , this.master.enemy.top + this.effect_position[ 1 ] );
+
+            var attack_light = this.master.statusManage.get().attack_light;
+
+            var spirit = this.master.enemy.border && !this.master.statusManage.isJump() ? this.master : this.master.enemy;
+
+            spirit.animate.start( ( attack_light ? -20 : -70 ) * spirit.direction, 0, 200, 'linear' );
+
+            var defenseBlood = this.master.states[ this.master.state ].defenseBlood;
+
+            if ( defenseBlood ){
+                this.master.enemy.bloodBar.reduce( defenseBlood || 5 );
+            }
+
+            this.master.enemy.attack.playAudio( 'sound/defense.mp3' );
+
+        },
+
+        enemyBeat: function(){
+
+            if ( this.master.state === 'jump_whirl_kick' || this.master.state === 'jump_light_whirl_kick' ){
+                if ( this.master.enemy.statusManage.isCrouch() ){
+                    return;
+                }
+            }
+
+            this.attackEffect.start( this.easing[ 4 ], this.master.direction === 1 ? this.master.enemy.left + this.effect_position[ 0 ] : this.master.enemy.left + this.master.enemy.width + this.effect_position[ 0 ] , this.master.enemy.top + this.effect_position[ 1 ] );
+
+            var attack_light = this.master.statusManage.get().attack_light;
+
+            if ( !this.master.statusManage.isCrouch() && this.master.enemy.statusManage.isJump() && this.master.state !== 'jump_whirl_kick' && this.master.state !== 'jump_light_whirl_kick' && this.master.state !== 'jump_heavy_impact_boxing' && this.master.state !== 'jump_light_impact_boxing' ){
+                this.master.enemy.play( 'jump_fall_down' );
+            }
+
+            else{
+                this.master.enemy.play( this.easing[ 5 ], true );
+            }
+
+
+            if ( this.master.enemy.border && !this.master.statusManage.isJump() ){
+                this.master.animate.start( ( attack_light ? -70 : -150 ) * this.master.direction, 0, 300, 'linear' );
+            }
+
+            this.master.enemy.bloodBar.reduce( this.easing[ 6 ] || 50 );
+
+            this.master.enemy.waveBoxing.ready_firing = false;
+
+            this.playAudio( null, 1 );
+
+            //this.master.enemy.attack.stop();
+
+            this.stop();
+
+        },
+
+        start: function( left, top, easing, effect_position, sound ){
+            if ( this.master.direction === 1 ){
+                this.left = this.master.left + left;
+            }else{
+                this.left = this.master.left + this.master.width * 2 - left - this.width * 2;
+            }
+            this.top = this.master.top + top;
+            this.effect_position = effect_position;
+            this.animate.start( easing[0], easing[1], easing[2], easing[3] );
+            this.easing = easing;
+            this.sound = sound;
+            this.timer.start();
+        },
+
+        stickStart: function( easing, effect_position, sound ){
+            var self = this;
+            this.easing = easing;
+            this.effect_position = effect_position;
+            this.sound = sound;
+            this.width = this.height = easing[ 2 ];
+            this.animate_type = 'stick';
+            this.timer.start();
+            this.playAudio( this.sound[ 0 ] )
+        },
+
+        stop: function(){
+            this.animate_type = 'normal';
+            this.timer.stop();
+            this.master.statusManage.set_attack_power( [ 0, false ] );  //ÊîªÂáª‰πãÂêéÂèñÊ∂àÊó†ÊïåÁä∂ÊÄÅ
+            this.playAudio( null, 0 );
+        },
+
+        playAudio: function( src, type ){
+
+            if ( src ){
+                return this.audio.play( src );
+            }
+
+            if ( !this.sound ) return;
+
+            if ( type === 1 ){
+                return this.master.enemy.attack.audio.play( this.sound[ 1 ] );
+            }else if ( type === 0 ){
+                if ( this.master.statusManage.isJump() ) return;
+                var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;
+                if ( enemy_attack_type !== 'beat' &&  enemy_attack_type !== 'fall_down' && this.master.statusManage.get().attack_type === 'attack' ){
+                    return this.audio.play( this.sound[ 0 ] );
+                }
+            }
+
+
+        },
+
+        crossBorder: function( left ){
+            var maxX =  Map.getMaxX();
+            if ( left < 15 || left > maxX - this.width - 20 ){
+                this.stop();
+            }
+            return left;
+        }
+
+
+    }
 
 
 )
@@ -745,178 +745,178 @@ Fighter.interface( 'Audio', Interfaces.Audio );
 
 var WaveBoxing = Fighter.subClass( function( master ){
 
-	this.width = 56;
-	this.height = 32;
-	this.direction = 1;
-	this.master = master;
-	this.easing = null;
-	this.firing = false;
-	this.ready_firing = false;
-	this.timer = null;
-	
-	}, {
-				init: function(){
-					var self = this;
-					this.frames = this.implement( 'SpiritFrames' );
-					this.animate = this.implement( 'Animate' );
-					this.collision = this.implement( 'Collision', 48, 32 );
-					this.attackEffect = this.implement( 'AttackEffect', this );
+        this.width = 56;
+        this.height = 32;
+        this.direction = 1;
+        this.master = master;
+        this.easing = null;
+        this.firing = false;
+        this.ready_firing = false;
+        this.timer = null;
 
-					this.frames.event.listen( 'frameStart', function(){
+    }, {
+        init: function(){
+            var self = this;
+            this.frames = this.implement( 'SpiritFrames' );
+            this.animate = this.implement( 'Animate' );
+            this.collision = this.implement( 'Collision', 48, 32 );
+            this.attackEffect = this.implement( 'AttackEffect', this );
 
-						self.animate.move();
+            this.frames.event.listen( 'frameStart', function(){
 
-						self.firing && self.collision.check();
-		
-					})
+                self.animate.move();
+
+                self.firing && self.collision.check();
+
+            })
 
 
-					this.collision.event.listen( 'affirm',  function( obj, dir ){
+            this.collision.event.listen( 'affirm',  function( obj, dir ){
 
-						if ( obj === self.master.enemy.waveBoxing && self.firing && self.master.enemy.waveBoxing.firing ){
-							self.stop();
-							self.master.enemy.waveBoxing.stop();
-							self.master.enemy.waveBoxing.attackEffect.start( self.easing[ 4 ], self.master.enemy.waveBoxing.direction === 1 ? self.left - self.width : self.left + self.width , self.top );
-							return self.attackEffect.start( self.easing[ 4 ], self.left, self.top );
-						}
+                if ( obj === self.master.enemy.waveBoxing && self.firing && self.master.enemy.waveBoxing.firing ){
+                    self.stop();
+                    self.master.enemy.waveBoxing.stop();
+                    self.master.enemy.waveBoxing.attackEffect.start( self.easing[ 4 ], self.master.enemy.waveBoxing.direction === 1 ? self.left - self.width : self.left + self.width , self.top );
+                    return self.attackEffect.start( self.easing[ 4 ], self.left, self.top );
+                }
 
-						if ( obj === self.master.enemy ){
+                if ( obj === self.master.enemy ){
 
-							if ( Math.abs( this.top - this.master.enemy.top ) > 130 ) return;  //Ã¯‘æµƒ ±∫ÚΩµµÕ≈ˆ◊≤Ãıº˛
+                    if ( Math.abs( this.top - this.master.enemy.top ) > 130 ) return;  //Ë∑≥Ë∑ÉÁöÑÊó∂ÂÄôÈôç‰ΩéÁ¢∞ÊíûÊù°‰ª∂
 
-							var enemy_invincible = this.master.enemy.statusManage.get().invincible;
+                    var enemy_invincible = this.master.enemy.statusManage.get().invincible;
 
-							if ( enemy_invincible ){
-								return;
-							}
+                    if ( enemy_invincible ){
+                        return;
+                    }
 
-							var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;
+                    var enemy_attack_type = this.master.enemy.statusManage.get().attack_type;
 
-							if ( enemy_attack_type === 'defense' ){
-								setTimeout(function(){
-									self.stop();
-								}, 0)
-								return self.enemyDefense();
-							}
+                    if ( enemy_attack_type === 'defense' ){
+                        setTimeout(function(){
+                            self.stop();
+                        }, 0)
+                        return self.enemyDefense();
+                    }
 
-							setTimeout(function(){
-								self.stop();
-							}, 0)
+                    setTimeout(function(){
+                        self.stop();
+                    }, 0)
 
-							this.enemyBeat();
+                    this.enemyBeat();
 
-						}
-						
+                }
 
-	
-					})
 
-					this.frames.event.listen( 'framesDone', function(){
-						self.frames.loop();
-						self.animate.loop();
-					})
 
-					return this;
-				},
+            })
 
-			enemyDefense: function(){
+            this.frames.event.listen( 'framesDone', function(){
+                self.frames.loop();
+                self.animate.loop();
+            })
 
-				this.master.enemy.attack.audio.play( 'sound/defense.mp3' );
+            return this;
+        },
 
-				this.master.enemy.waveBoxing.ready_firing = false;
+        enemyDefense: function(){
 
-				this.attackEffect.start( this.easing[ 4 ], this.left, this.top );
+            this.master.enemy.attack.audio.play( 'sound/defense.mp3' );
 
-				var attack_light = this.master.statusManage.get().attack_light;
+            this.master.enemy.waveBoxing.ready_firing = false;
 
-				if ( this.master.enemy.statusManage.isStand() ){
-					this.master.enemy.play( 'force_stand_up_defense' );
-				}else{
-					this.master.enemy.play( 'force_stand_crouch_defense' );
-				}
+            this.attackEffect.start( this.easing[ 4 ], this.left, this.top );
 
-				this.master.enemy.animate.start( ( attack_light ? -50 : -100 ) * this.master.enemy.direction, 0, 300, 'linear' );
-				
-				var distance = this.master.statusManage.get().enemy_distance_type;
+            var attack_light = this.master.statusManage.get().attack_light;
 
-				if ( this.master.enemy.border && ( distance === 'near' || distance === 'middle' ) ){
-					this.master.animate.start( ( attack_light ? -50 : -100 ) * this.master.direction, 0, 300, 'linear' );		
-				}
+            if ( this.master.enemy.statusManage.isStand() ){
+                this.master.enemy.play( 'force_stand_up_defense' );
+            }else{
+                this.master.enemy.play( 'force_stand_crouch_defense' );
+            }
 
-				this.master.enemy.bloodBar.reduce( this.easing[ 7 ] || 0 );
+            this.master.enemy.animate.start( ( attack_light ? -50 : -100 ) * this.master.enemy.direction, 0, 300, 'linear' );
 
-			},
+            var distance = this.master.statusManage.get().enemy_distance_type;
 
-			enemyBeat: function(){
+            if ( this.master.enemy.border && ( distance === 'near' || distance === 'middle' ) ){
+                this.master.animate.start( ( attack_light ? -50 : -100 ) * this.master.direction, 0, 300, 'linear' );
+            }
 
-				this.master.enemy.waveBoxing.ready_firing = false;
+            this.master.enemy.bloodBar.reduce( this.easing[ 7 ] || 0 );
 
-				this.attackEffect.start( this.easing[ 4 ], this.left, this.top );
+        },
 
-				var attack_light = this.master.statusManage.get().attack_light;
+        enemyBeat: function(){
 
-				if ( this.master.enemy.statusManage.isJump() ){
-					this.master.enemy.play( 'heavy_attacked_fall_down', true );
-				}
+            this.master.enemy.waveBoxing.ready_firing = false;
 
-				else{
-					this.master.enemy.play( this.easing[ 5 ], true );
-				}
+            this.attackEffect.start( this.easing[ 4 ], this.left, this.top );
 
-				var distance = this.master.statusManage.get().enemy_distance_type;
+            var attack_light = this.master.statusManage.get().attack_light;
 
-				if ( this.master.enemy.border && ( distance === 'near' || distance === 'middle' ) ){
-					this.master.animate.start( ( attack_light ? -70 : -120 ) * this.master.direction, 0, 300, 'linear' );		
-				}
+            if ( this.master.enemy.statusManage.isJump() ){
+                this.master.enemy.play( 'heavy_attacked_fall_down', true );
+            }
 
-				this.master.enemy.bloodBar.reduce( this.easing[ 6 ] || 50 );
-				
-				this.master.enemy.attack.audio.play( 'sound/hit_heavy_boxing.mp3' );
+            else{
+                this.master.enemy.play( this.easing[ 5 ], true );
+            }
 
-			},
+            var distance = this.master.statusManage.get().enemy_distance_type;
 
-				start: function( dir, state ){
-					var self = this;
-					this.ready_firing = true;
-					this.timer = setTimeout( function(){
-						if ( self.ready_firing === false ) {
-							return clearTimeout( self.timer );
-						}
+            if ( this.master.enemy.border && ( distance === 'near' || distance === 'middle' ) ){
+                this.master.animate.start( ( attack_light ? -70 : -120 ) * this.master.direction, 0, 300, 'linear' );
+            }
 
-						self.easing = state.attack_config;
-						self.firing = true;
-						self.direction = dir;
-						self.top = self.master.top + 40;
+            this.master.enemy.bloodBar.reduce( this.easing[ 6 ] || 50 );
 
-						if ( self.direction === -1 ){
-							self.left = self.master.left + self.width - 90;
-						}else{
-							self.left = self.master.left + self.master.width + 50;	
-						}
+            this.master.enemy.attack.audio.play( 'sound/hit_heavy_boxing.mp3' );
 
-						self.frames.start( state.bg, state.framesNum, state.easing[2], state.repeat, state.position, self.direction );
+        },
 
-						self.animate.start( state.easing[0] * self.direction, 0, state.easing[2] * Config.fps * state.framesNum, state.easing[3] );
+        start: function( dir, state ){
+            var self = this;
+            this.ready_firing = true;
+            this.timer = setTimeout( function(){
+                if ( self.ready_firing === false ) {
+                    return clearTimeout( self.timer );
+                }
 
-					}, 150 )
-					
-				},
+                self.easing = state.attack_config;
+                self.firing = true;
+                self.direction = dir;
+                self.top = self.master.top + 40;
 
-				stop: function(){
-					this.firing = false;
-					this.frames.stop();
-				},
+                if ( self.direction === -1 ){
+                    self.left = self.master.left + self.width - 90;
+                }else{
+                    self.left = self.master.left + self.master.width + 50;
+                }
 
-				crossBorder: function( left ){
-					var maxX =  Map.getMaxX();
-					if ( left < 15 || left > maxX - this.width ){
-						this.stop();
-					}
-					return left;
-				}
-	
-		 } 
-	
+                self.frames.start( state.bg, state.framesNum, state.easing[2], state.repeat, state.position, self.direction );
+
+                self.animate.start( state.easing[0] * self.direction, 0, state.easing[2] * Config.fps * state.framesNum, state.easing[3] );
+
+            }, 150 )
+
+        },
+
+        stop: function(){
+            this.firing = false;
+            this.frames.stop();
+        },
+
+        crossBorder: function( left ){
+            var maxX =  Map.getMaxX();
+            if ( left < 15 || left > maxX - this.width ){
+                this.stop();
+            }
+            return left;
+        }
+
+    }
+
 )
 
 
